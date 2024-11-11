@@ -1,3 +1,15 @@
+
+
+/**
+ * @file Perceptron.cpp
+ * @brief Implementation of the Perceptron class for a simple neural network.
+ * 
+ * This file contains the implementation of a Perceptron class template, which is a fundamental building block for neural networks.
+ * The Perceptron class supports various activation functions and provides methods for initializing, training, and using the perceptron.
+ * 
+ * @tparam T The data type for the perceptron weights, inputs, and outputs (e.g., float, double).
+ */
+
 #include "Perceptron.hpp"
 #include <cmath>
 #include <string>
@@ -6,6 +18,11 @@
 using namespace std;
 using std::vector;
 
+/**
+ * @brief Default constructor for the Perceptron class.
+ * 
+ * Initializes the perceptron with default values.
+ */
 template <typename T>
 Perceptron<T>::Perceptron()
 {
@@ -15,12 +32,22 @@ Perceptron<T>::Perceptron()
     this->activationType = "sigmoid";
 }
 
+/**
+ * @brief Constructor for the Perceptron class with a specified input size.
+ * 
+ * @param inputSize The number of inputs to the perceptron.
+ */
 template <typename T>
 Perceptron<T>::Perceptron(int inputSize)
 {
     init(inputSize);
 }
 
+/**
+ * @brief Destructor for the Perceptron class.
+ * 
+ * Frees any allocated memory and resets the perceptron state.
+ */
 template <typename T>
 Perceptron<T>::~Perceptron()
 {
@@ -35,6 +62,11 @@ Perceptron<T>::~Perceptron()
     activationType = "sigmoid";
 }
 
+/**
+ * @brief Initializes the perceptron with random weights and bias.
+ * 
+ * @param inputSize The number of inputs to the perceptron.
+ */
 template <typename T>
 void Perceptron<T>::init(int inputSize)
 {
@@ -45,23 +77,42 @@ void Perceptron<T>::init(int inputSize)
     bias = ((T)rand() / RAND_MAX) * 2 - 1;
 }
 
+/**
+ * @brief Sets the weights of the perceptron.
+ * 
+ * @param weights A vector containing the new weights.
+ */
 template <typename T>
 void Perceptron<T>::setWeights(const vector<T>& weights) {
     this->weights = weights;
 }
 
+/**
+ * @brief Sets a specific weight of the perceptron.
+ * 
+ * @param index The index of the weight to set.
+ * @param weights The new weight value.
+ */
 template <typename T>
 void Perceptron<T>::setWeights(const int index, const T weights)
 {
     this->weights[index] = weights;
 }
 
+/**
+ * @brief Sets the bias of the perceptron.
+ * 
+ * @param bias The new bias value.
+ */
 template <typename T>
 void Perceptron<T>::setBias(T bias)
 {
     this->bias = T(bias);
 }
 
+/**
+ * @brief Resets the weights and bias of the perceptron to random values.
+ */
 template <typename T>
 void Perceptron<T>::resetWeightsBias()
 {
@@ -71,18 +122,33 @@ void Perceptron<T>::resetWeightsBias()
     bias = ((T)rand() / RAND_MAX) * 2 - 1;
 }
 
+/**
+ * @brief Returns the current weights of the perceptron.
+ * 
+ * @return A vector containing the current weights.
+ */
 template <typename T>
 vector<T> Perceptron<T>::_weights()
 {
     return vector<T>(this->weights);
 }
 
+/**
+ * @brief Returns the current bias of the perceptron.
+ * 
+ * @return The current bias value.
+ */
 template <typename T>
 T Perceptron<T>::_bias()
 {
     return T(this->bias);
 }
 
+/**
+ * @brief Sets the activation function type for the perceptron.
+ * 
+ * @param type The activation function type (e.g., "linear", "sigmoid", "tanh", "relu", "leakyrelu", "softmax", "step").
+ */
 template <typename T>
 void Perceptron<T>::typeActivation(string type)
 {
@@ -107,6 +173,12 @@ void Perceptron<T>::typeActivation(string type)
     this->activationType = type;
 }
 
+/**
+ * @brief Applies the activation function to the input value.
+ * 
+ * @param x The input value.
+ * @return The output value after applying the activation function.
+ */
 template <typename T>
 T Perceptron<T>::activation(T x) {
     if (activationType == "linear") {
@@ -131,6 +203,12 @@ T Perceptron<T>::activation(T x) {
     }
 }
 
+/**
+ * @brief Feeds the input values through the perceptron and computes the output.
+ * 
+ * @param inputs A vector containing the input values.
+ * @return The output value after applying the perceptron.
+ */
 template <typename T>
 T Perceptron<T>::feedForward(const vector<T>& inputs)
 {
@@ -143,6 +221,13 @@ T Perceptron<T>::feedForward(const vector<T>& inputs)
     return T(output);
 }
 
+/**
+ * @brief Feeds the input values through the perceptron with a specified bias and computes the output.
+ * 
+ * @param inputs A vector containing the input values.
+ * @param bias The bias value to use.
+ * @return The output value after applying the perceptron.
+ */
 template <typename T>
 T Perceptron<T>::feedForward(const vector<T>& inputs, T bias)
 {
@@ -155,6 +240,13 @@ T Perceptron<T>::feedForward(const vector<T>& inputs, T bias)
     return T(output);
 }
 
+/**
+ * @brief Trains the perceptron using the given inputs and target output.
+ * 
+ * @param inputs A vector containing the input values.
+ * @param target The target output value.
+ * @param learningRate The learning rate for the training.
+ */
 template <typename T>
 void Perceptron<T>::train(const vector<T>& inputs, T target, const T learningRate) {
     T error = target - feedForward(inputs);
@@ -164,30 +256,53 @@ void Perceptron<T>::train(const vector<T>& inputs, T target, const T learningRat
     bias += learningRate * error;
 }
 
+/**
+ * @brief Returns the current weights of the perceptron.
+ * 
+ * @return A vector containing the current weights.
+ */
 template <typename T>
 vector<T> Perceptron<T>::getWeights()
 {
     return vector<T>(this->weights);
 }
 
+/**
+ * @brief Returns the current bias of the perceptron.
+ * 
+ * @return The current bias value.
+ */
 template <typename T>
 T Perceptron<T>::getBias()
 {
     return T(this->bias);
 }
 
+/**
+ * @brief Creates a copy of the current perceptron environment.
+ * 
+ * @return A copy of the current perceptron.
+ */
 template <typename T>
 Perceptron<T> Perceptron<T>::cpyEnv() const
 {
     return Perceptron<T>(*this);
 }
 
+/**
+ * @brief Returns the current output of the perceptron.
+ * 
+ * @return The current output value.
+ */
 template <typename T>
 T Perceptron<T>::getOutput()
 {
     return T(this->output);
 }
 
+/**
+ * @brief Displays the current state of the perceptron.
+ */
 template <typename T>
 void Perceptron<T>::display()
 {

@@ -1,6 +1,194 @@
+/**
+ * @file MLP.cpp
+ * @brief Implementation of a Multi-Layer Perceptron (MLP) neural network.
+ * 
+ * This file contains the implementation of a Multi-Layer Perceptron (MLP) neural network.
+ * The MLP class provides methods for initializing the network, training it using backpropagation,
+ * and making predictions. The network supports different activation functions and can be trained
+ * on both Windows and Linux platforms.
+ * 
+ * @note This implementation uses OpenMP for parallel processing and nlohmann::json for JSON parsing.
+ * 
+ * @include "MLP.hpp"
+ * @include <nlohmann/json.hpp>
+ * @include <fstream>
+ * @include <sstream>
+ * @include <stdexcept>
+ * @include <thread>
+ * @include <conio.h> (Windows)
+ * @include <atomic> (Linux)
+ * @include <unistd.h> (Linux)
+ * @include <fcntl.h> (Linux)
+ * @include <termios.h> (Linux)
+ * 
+ * @namespace std
+ * @namespace chrono
+ * 
+ * @class MultiLayerPerceptron
+ * @brief A class representing a Multi-Layer Perceptron (MLP) neural network.
+ * 
+ * @tparam T The data type used for the network's weights, biases, and computations (e.g., float, double).
+ * 
+ * @fn MultiLayerPerceptron<T>::MultiLayerPerceptron()
+ * @brief Default constructor. Initializes an empty MLP.
+ * 
+ * @fn MultiLayerPerceptron<T>::MultiLayerPerceptron(const vector<int> &layersSize)
+ * @brief Constructor that initializes the MLP with the specified layer sizes.
+ * @param layersSize A vector containing the number of nodes in each layer.
+ * 
+ * @fn MultiLayerPerceptron<T>::MultiLayerPerceptron(const string &filename)
+ * @brief Constructor that initializes the MLP from a JSON file.
+ * @param filename The path to the JSON file.
+ * 
+ * @fn MultiLayerPerceptron<T>::~MultiLayerPerceptron()
+ * @brief Destructor. Frees the memory used by the MLP.
+ * 
+ * @fn void MultiLayerPerceptron<T>::initLayer(const vector<int>& Size)
+ * @brief Initializes the layers of the MLP with the specified sizes.
+ * @param Size A vector containing the number of nodes in each layer.
+ * 
+ * @fn vector<T> MultiLayerPerceptron<T>::feedForward(const vector<T> &inputs)
+ * @brief Performs a forward pass through the network.
+ * @param inputs A vector containing the input values.
+ * @return A vector containing the output values.
+ * 
+ * @fn void MultiLayerPerceptron<T>::backPropagation(const vector<vector<T>> &inputs, const vector<vector<T>> &targets, const T learningRate)
+ * @brief Performs backpropagation to train the network.
+ * @param inputs A vector of input vectors.
+ * @param targets A vector of target output vectors.
+ * @param learningRate The learning rate for training.
+ * 
+ * @fn T MultiLayerPerceptron<T>::updateWeights(const T weight, const T learningRate, const T error, const T input)
+ * @brief Updates a weight using the specified learning rate, error, and input.
+ * @param weight The current weight.
+ * @param learningRate The learning rate.
+ * @param error The error value.
+ * @param input The input value.
+ * @return The updated weight.
+ * 
+ * @fn T MultiLayerPerceptron<T>::updateBias(const T bias, const T learningRate, const T error)
+ * @brief Updates a bias using the specified learning rate and error.
+ * @param bias The current bias.
+ * @param learningRate The learning rate.
+ * @param error The error value.
+ * @return The updated bias.
+ * 
+ * @fn T MultiLayerPerceptron<T>::hiddenLayerError(const T output, const T error, const T weight)
+ * @brief Computes the error for a hidden layer node.
+ * @param output The output value of the node.
+ * @param error The error value.
+ * @param weight The weight value.
+ * @return The computed error.
+ * 
+ * @fn T MultiLayerPerceptron<T>::outputLayerError(const T output, const T target)
+ * @brief Computes the error for an output layer node.
+ * @param output The output value of the node.
+ * @param target The target value.
+ * @return The computed error.
+ * 
+ * @fn void MultiLayerPerceptron<T>::resetWeightsBias()
+ * @brief Resets the weights and biases of the network.
+ * 
+ * @fn void MultiLayerPerceptron<T>::train(const vector<vector<T>> &inputs, const vector<vector<T>> &targets, const T learningRate, const bool verbose)
+ * @brief Trains the network using the specified inputs, targets, and learning rate.
+ * @param inputs A vector of input vectors.
+ * @param targets A vector of target output vectors.
+ * @param learningRate The learning rate for training.
+ * @param verbose If true, prints training progress.
+ * 
+ * @fn void MultiLayerPerceptron<T>::train(const vector<vector<T>> &inputs, const vector<vector<T>> &targets, const T learningRate, const int iterations, const bool verbose)
+ * @brief Trains the network for a specified number of iterations.
+ * @param inputs A vector of input vectors.
+ * @param targets A vector of target output vectors.
+ * @param learningRate The learning rate for training.
+ * @param iterations The number of iterations to train for.
+ * @param verbose If true, prints training progress.
+ * 
+ * @fn void MultiLayerPerceptron<T>::typeDeActivation(string type)
+ * @brief Sets the activation function type for the network.
+ * @param type The activation function type (e.g., "linear", "sigmoid").
+ * 
+ * @fn T MultiLayerPerceptron<T>::activationDerivative(T x, string type)
+ * @brief Computes the derivative of the activation function.
+ * @param x The input value.
+ * @param type The activation function type.
+ * @return The computed derivative.
+ * 
+ * @fn T MultiLayerPerceptron<T>::calculateAccuracy(const vector<vector<T>> &inputs, const vector<vector<T>> &targets)
+ * @brief Calculates the accuracy of the network.
+ * @param inputs A vector of input vectors.
+ * @param targets A vector of target output vectors.
+ * @return The accuracy value.
+ * 
+ * @fn T MultiLayerPerceptron<T>::calculateLoss(const vector<vector<T>> &inputs, const vector<vector<T>> &targets)
+ * @brief Calculates the loss of the network.
+ * @param inputs A vector of input vectors.
+ * @param targets A vector of target output vectors.
+ * @return The loss value.
+ * 
+ * @fn bool MultiLayerPerceptron<T>::allOutputsCorrect(const vector<vector<T>> &inputs, const vector<vector<T>> &targets)
+ * @brief Checks if all outputs are correct.
+ * @param inputs A vector of input vectors.
+ * @param targets A vector of target output vectors.
+ * @return True if all outputs are correct, false otherwise.
+ * 
+ * @fn void MultiLayerPerceptron<T>::setActivation(const vector<string> &activationTypes)
+ * @brief Sets the activation functions for each layer.
+ * @param activationTypes A vector of activation function types.
+ * 
+ * @fn void MultiLayerPerceptron<T>::setLayerWeights(int layerIndex, const vector<vector<T>> &weights)
+ * @brief Sets the weights for a specified layer.
+ * @param layerIndex The index of the layer.
+ * @param weights A vector of weight vectors.
+ * 
+ * @fn void MultiLayerPerceptron<T>::setLayerBias(int layerIndex, const vector<T> &biases)
+ * @brief Sets the biases for a specified layer.
+ * @param layerIndex The index of the layer.
+ * @param biases A vector of bias values.
+ * 
+ * @fn void MultiLayerPerceptron<T>::setAccuracy(T accuracy)
+ * @brief Sets the accuracy threshold for the network.
+ * @param accuracy The accuracy value.
+ * 
+ * @fn vector<T> MultiLayerPerceptron<T>::predict(const vector<T> &inputs, const rod r)
+ * @brief Makes a prediction using the network.
+ * @param inputs A vector of input values.
+ * @param r The rounding/display option.
+ * @return A vector of output values.
+ * 
+ * @fn vector<vector<T>> MultiLayerPerceptron<T>::predict(const vector<vector<T>> &inputs, const rod r)
+ * @brief Makes predictions for multiple inputs using the network.
+ * @param inputs A vector of input vectors.
+ * @param r The rounding/display option.
+ * @return A vector of output vectors.
+ * 
+ * @fn void MultiLayerPerceptron<T>::export_to_json(const string &filename)
+ * @brief Exports the network configuration to a JSON file.
+ * @param filename The path to the JSON file.
+ * 
+ * @fn void MultiLayerPerceptron<T>::import_from_json(const string &filename)
+ * @brief Imports the network configuration from a JSON file.
+ * @param filename The path to the JSON file.
+ * 
+ * @fn void MultiLayerPerceptron<T>::display()
+ * @brief Displays the network configuration.
+ * 
+ * @fn MultiLayerPerceptron<T> MultiLayerPerceptron<T>::clone() const
+ * @brief Creates a clone of the network.
+ * @return A cloned MLP object.
+ * 
+ * @fn vector<MultiLayerPerceptron<T>> MultiLayerPerceptron<T>::getHistory()
+ * @brief Gets the training history of the network.
+ * @return A vector of MLP objects representing the training history.
+ */
+
 #include "MLP.hpp"
 #include <nlohmann/json.hpp>
 #include <fstream>
+#include <sstream>
+#include <stdexcept>
+
+
 
 #ifdef _WIN32
     #include <thread>
@@ -155,6 +343,28 @@ vector<T> MultiLayerPerceptron<T>::feedForward(const vector<T> &inputs)
     return outputs;
 }
 
+/**
+ * @brief Performs backpropagation on the MultiLayerPerceptron to update weights and biases.
+ * 
+ * This function takes a set of input vectors and corresponding target vectors, and adjusts the 
+ * weights and biases of the neural network using the backpropagation algorithm. The learning rate 
+ * determines the step size for weight and bias updates.
+ * 
+ * @tparam T The data type used for the neural network (e.g., float, double).
+ * @param inputs A vector of input vectors, where each input vector corresponds to a single training example.
+ * @param targets A vector of target vectors, where each target vector corresponds to the desired output for a single training example.
+ * @param learningRate The learning rate used to update the weights and biases.
+ * 
+ * @throws std::invalid_argument If the size of the inputs vector does not match the size of the targets vector.
+ * 
+ * The function performs the following steps:
+ * 1. Checks that the size of the inputs vector matches the size of the targets vector.
+ * 2. For each training example:
+ *    a. Performs a forward pass to compute the output of the network.
+ *    b. Computes the error at the output layer.
+ *    c. Computes the errors for each layer from the output layer to the input layer.
+ *    d. Updates the weights and biases for each layer based on the computed errors.
+ */
 template <typename T>
 void MultiLayerPerceptron<T>::backPropagation(const vector<vector<T>> &inputs, const vector<vector<T>> &targets, const T learningRate)
 {

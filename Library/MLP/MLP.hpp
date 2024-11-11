@@ -88,13 +88,11 @@ class MultiLayerPerceptron : private Perceptron<T>
         vector<T> predict(const vector<T>& inputs, const rod rd = NONE);
         vector<vector<T>> predict(const vector<vector<T>>& inputs, const rod rd = NONE);
 
-        // TODO : exportWeights, exportBias to JSON, CSV, etc.
+        // TODO : exportWeights, exportBias to JSON, etc.
         void export_to_json(const string& filename);
-        void export_to_csv(const string& filename);
 
-        // TODO : importWeights, importBias from JSON, CSV, etc.
+        // TODO : importWeights, importBias from JSON, etc.
         void import_from_json(const string &filename);
-        void import_from_csv(const string &filename);
 
         // * Display layers
         void display();

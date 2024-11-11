@@ -343,6 +343,10 @@ int main() {
     MultiLayerPerceptron<double> mlp2("model.json");
     // mlp2.display();
 
+    cout << endl;
+
+    cout << "Result Import Model" << endl;
+
     mlp2.display();
 
     mlp2.predict(inputs_test, ROUND);
