@@ -276,7 +276,7 @@ void MultiLayerPerceptron<T>::train(const vector<vector<T>> &inputs, const vecto
         backPropagation(inputs, targets, learningRate);
         iterations++;
         if(verbose == true || trainning_display) {
-            cout << "Iterations: " << iterations << " Accuracy: " << calculateAccuracy(inputs, targets) * 100 << "%" << " Loss: " << calculateLoss(inputs, targets) << endl;
+            cout << "\033[1;32mIterations: \033[0m" << iterations << " \033[1;32mAccuracy: \033[0m" << calculateAccuracy(inputs, targets) * 100 << "%" << " \033[1;32mLoss: \033[0m" << calculateLoss(inputs, targets) << endl;
         }
 
         // * if loss is less than accuracy then break
@@ -293,29 +293,6 @@ void MultiLayerPerceptron<T>::train(const vector<vector<T>> &inputs, const vecto
             running = false;
             break;
         }
-
-        // // * loss is not changing then break
-        // if (iterations > 1) {
-        //     oldloss = loss;
-        //     loss = calculateLoss(inputs, targets);
-        //     if (abs(oldloss - loss) < pow(accuracy, 4)) {
-        //         lossCount++;
-
-        //         if((calculateAccuracy(inputs, targets) * 100) < 75) {
-        //             if (lossCount > 50000){
-        //                 resetWeightsBias();
-        //             }
-        //         } else if ((calculateAccuracy(inputs, targets) * 100) >= 75) {
-        //             if (lossCount > 100000){
-        //                 resetWeightsBias();
-        //             }
-        //         } else {
-        //             lossCount = 0;
-        //         }
-        //     } else {
-        //         lossCount = 0;
-        //     }
-        // }
     }
 
     inputThread.join();
@@ -325,12 +302,12 @@ void MultiLayerPerceptron<T>::train(const vector<vector<T>> &inputs, const vecto
 
     // * report trainning
     cout << endl;
-    cout << "Training finished!" << endl;
-    cout << "Iterations: " << iterations << endl;
-    cout << "Accuracy: " << calculateAccuracy(inputs, targets) * 100 << "%" << endl;
-    cout << "Loss: " << calculateLoss(inputs, targets) << endl;
-    cout << "All outputs correct: " << allOutputsCorrect(inputs, targets) << endl;
-    cout << "Time using: " << chrono::duration_cast<chrono::seconds>(end - start).count() << "s" << endl;
+    cout << "\033[1;32mTraining finished!\033[0m" << endl;
+    cout << "\033[1;32mIterations: \033[0m" << iterations << endl;
+    cout << "\033[1;32mAccuracy: \033[0m" << calculateAccuracy(inputs, targets) * 100 << "%" << endl;
+    cout << "\033[1;32mLoss: \033[0m" << calculateLoss(inputs, targets) << endl;
+    cout << "\033[1;32mAll outputs correct: \033[0m" << allOutputsCorrect(inputs, targets) << endl;
+    cout << "\033[1;32mTime using: \033[0m" << chrono::duration_cast<chrono::seconds>(end - start).count() << "s" << endl;
     cout << endl;
 }
 
@@ -344,11 +321,7 @@ void MultiLayerPerceptron<T>::train(const vector<vector<T>> &inputs, const vecto
     for (int i = 0; i < iterations; ++i) {
         backPropagation(inputs, targets, learningRate);
         if(verbose == true || trainning_display) {
-            cout << "Iterations: " << iterations << " Accuracy: " << calculateAccuracy(inputs, targets) * 100 << "%" << " Loss: " << calculateLoss(inputs, targets) << endl;
-        }
-
-        if(verbose == true || trainning_display) {
-            cout << "Iterations: " << iterations << " Accuracy: " << calculateAccuracy(inputs, targets) * 100 << "%" << " Loss: " << calculateLoss(inputs, targets) << endl;
+            cout << "\033[1;32mIterations: \033[0m" << iterations << " \033[1;32mAccuracy: \033[0m" << calculateAccuracy(inputs, targets) * 100 << "%" << " \033[1;32mLoss: \033[0m" << calculateLoss(inputs, targets) << endl;
         }
 
         // * if loss is less than accuracy then break
@@ -372,12 +345,12 @@ void MultiLayerPerceptron<T>::train(const vector<vector<T>> &inputs, const vecto
 
     // * report trainning
     cout << endl;
-    cout << "Training finished!" << endl;
-    cout << "Iterations: " << iterations << endl;
-    cout << "Accuracy: " << calculateAccuracy(inputs, targets) * 100 << "%" << endl;
-    cout << "Loss: " << calculateLoss(inputs, targets) << endl;
-    cout << "All outputs correct: " << allOutputsCorrect(inputs, targets) << endl;
-    cout << "Time using: " << chrono::duration_cast<chrono::seconds>(end - start).count() << "s" << endl;
+    cout << "\033[1;32mTraining finished!\033[0m" << endl;
+    cout << "\033[1;32mIterations: \033[0m" << iterations << endl;
+    cout << "\033[1;32mAccuracy: \033[0m" << calculateAccuracy(inputs, targets) * 100 << "%" << endl;
+    cout << "\033[1;32mLoss: \033[0m" << calculateLoss(inputs, targets) << endl;
+    cout << "\033[1;32mAll outputs correct: \033[0m" << allOutputsCorrect(inputs, targets) << endl;
+    cout << "\033[1;32mTime using: \033[0m" << chrono::duration_cast<chrono::seconds>(end - start).count() << "s" << endl;
     cout << endl;
 }
 
