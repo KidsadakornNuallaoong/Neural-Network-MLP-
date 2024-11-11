@@ -1,4 +1,6 @@
 #include "MLP.hpp"
+#include <nlohmann/json.hpp>
+#include <fstream>
 
 #ifdef _WIN32
     #include <thread>
@@ -94,6 +96,17 @@ MultiLayerPerceptron<T>::MultiLayerPerceptron(const vector<int> &layersSize)
     // * Constructor
     this->layers = vector<vector<Perceptron<T>>>();
     initLayer(layersSize);
+}
+
+template <typename T>
+MultiLayerPerceptron<T>::MultiLayerPerceptron(const string &filename)
+{
+    // * check file type and select import by type
+    if (filename.substr(filename.find_last_of(".") + 1) == "json") {
+        import_from_json(filename);
+    } else {
+        throw std::invalid_argument("File type not supported.");
+    }
 }
 
 template <typename T>
@@ -548,13 +561,13 @@ void MultiLayerPerceptron<T>::setAccuracy(T accuracy)
 template <typename T>
 vector<T> MultiLayerPerceptron<T>::predict(const vector<T> &inputs, const rod r)
 {
-    // * display input and output
+    // * display input and outputadd color text
     if (r == DISPLAY || r == R_D) {
-        cout << "Input: ";
+        cout << "\033[1;34mInput: \033[0m";
         for (int i = 0; i < inputs.size(); ++i) {
             cout << inputs[i] << " ";
         }
-        cout << "Output: ";
+        cout << "\033[1;34mOutput: \033[0m";
         for (int i = 0; i < feedForward(inputs).size(); ++i) {
             if (r == ROUND || r == R_D) {
                 cout << round(feedForward(inputs)[i]) << " ";
@@ -587,11 +600,11 @@ vector<vector<T>> MultiLayerPerceptron<T>::predict(const vector<vector<T>> &inpu
     // * display input and output
     if (r == DISPLAY || r == R_D) {
         for (int i = 0; i < inputs.size(); ++i) {
-            cout << "Input: ";
+            cout << "\033[1;34mInput: \033[0m";
             for (int j = 0; j < inputs[i].size(); ++j) {
                 cout << inputs[i][j] << " ";
             }
-            cout << "Output: ";
+            cout << "\033[1;34mOutput: \033[0m";
             for (int j = 0; j < outputs[i].size(); ++j) {
                 if (r == ROUND || r == R_D) {
                     cout << round(outputs[i][j]) << " ";
@@ -665,7 +678,56 @@ void MultiLayerPerceptron<T>::export_to_json(const string &filename)
 template <typename T>
 void MultiLayerPerceptron<T>::import_from_json(const string &filename)
 {
-    
+    // * Read the JSON file
+    /*
+        we need to config like this
+        vector<int> layersSize = {8*8, 64, 32, 1};
+        MultiLayerPerceptron<double> mlp(layersSize);
+
+        mlp.setActivation({"sigmoid", "sigmoid", "linear"});
+        mlp.setAccuracy(0.01);
+        // mlp.display();
+
+        double learningRate = 0.01;
+    */
+
+    ifstream file(filename);
+    if (!file.is_open()) {
+        throw std::runtime_error("Could not open file for reading");
+    }
+
+    nlohmann::json json;
+    file >> json;
+    file.close();
+
+    // * Read the layers
+    vector<int> layersSize;
+    vector<string> activationTypes;
+    vector<vector<vector<T>>> weights;
+    vector<vector<T>> biases;
+
+    layersSize.push_back(json["layers"][0]["nodes"][0]["weights"].size());
+    for (int i = 0; i < json["layers"].size(); ++i) {
+        layersSize.push_back(json["layers"][i]["nodes"].size());
+        activationTypes.push_back(json["layers"][i]["activation"]);
+        weights.push_back(vector<vector<T>>());
+        biases.push_back(vector<T>());
+
+        for (int j = 0; j < json["layers"][i]["nodes"].size(); ++j) {
+            weights[i].push_back(json["layers"][i]["nodes"][j]["weights"].get<vector<T>>());
+            biases[i].push_back(json["layers"][i]["nodes"][j]["bias"].get<T>());
+        }
+    }
+
+    // Initialize the MLP with the read configuration
+    initLayer(layersSize);
+    setActivation(activationTypes);
+
+    // Set the weights and biases for each layer
+    for (int i = 0; i < layersSize.size() - 1; ++i) {
+        setLayerWeights(i, weights[i]);
+        setLayerBias(i, biases[i]);
+    }
 }
 
 template <typename T>
@@ -673,16 +735,16 @@ void MultiLayerPerceptron<T>::display()
 {
     // * Display layers
     for (int i = 0; i < layers.size(); ++i) {
-        cout << "Layer: " << i << " -> " << "activation: " << activationTypes[i] << endl;
-        cout << "Base accuracy: " << accuracy << endl;
+        cout << "\033[1;34mLayer: " << i << " -> " << "activation: " << activationTypes[i] << "\033[0m" << endl;
+        cout << "\033[1;32mBase accuracy: " << accuracy << "\033[0m" << endl;
         for (int j = 0; j < layers[i].size(); ++j) {
-            cout << "Node: " << j << " ";
+            cout << "\033[1;33mNode: " << j << " \033[0m";
             // * display weights and bias
-            cout << "W: ";
+            cout << "\033[1;36mW: \033[0m";
             for (int k = 0; k < layers[i][j].getWeights().size(); ++k) {
                 cout << layers[i][j].getWeights()[k] << " ";
             }
-            cout << "B: " << layers[i][j].getBias() << endl;
+            cout << "\033[1;36mB: \033[0m" << layers[i][j].getBias() << endl;
         }
     }
 }

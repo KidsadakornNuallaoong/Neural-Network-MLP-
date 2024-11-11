@@ -254,10 +254,10 @@ int main() {
     cout << "Max size: " << count_max_size(binary_texts) << endl;
 
     // * Test Multi-Layer Perceptron
-    vector<int> layersSize = {8*8, 64, 32, 1};
+    vector<int> layersSize = {8*8, 32, 1};
     MultiLayerPerceptron<double> mlp(layersSize);
 
-    mlp.setActivation({"sigmoid", "sigmoid", "linear"});
+    mlp.setActivation({"sigmoid", "linear"});
     mlp.setAccuracy(0.01);
     // mlp.display();
 
@@ -337,6 +337,26 @@ int main() {
         }
         cout << endl;
     }
+
+    mlp.export_to_json("model.json");
+
+    MultiLayerPerceptron<double> mlp2("model.json");
+    // mlp2.display();
+
+    mlp2.display();
+
+    mlp2.predict(inputs_test, ROUND);
+
+    vector<vector<double>> result2 = mlp2.predict(inputs_test, ROUND);
+
+    for (int i = 0; i < int(result2.size()); i++){
+        cout << "Result: ";
+        for (int j = 0; j < int(result2[i].size()); j++){
+            cout << result2[i][j] << " ";
+        }
+        cout << endl;
+    }
+
 
     return 0;
 }

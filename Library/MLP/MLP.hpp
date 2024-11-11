@@ -45,6 +45,9 @@ class MultiLayerPerceptron : private Perceptron<T>
 
         // * Constructor with layers size
         MultiLayerPerceptron(const vector<int>& layersSize);
+
+        // * Constructor for import model file
+        MultiLayerPerceptron(const string& filename);
         
         // * Destructor
         ~MultiLayerPerceptron();
