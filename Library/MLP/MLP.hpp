@@ -97,6 +97,9 @@ class MultiLayerPerceptron : private Perceptron<T>
         // * Display layers
         void display();
 
+        // ! Optional functions to clear the model before clone the model
+        void clearModel();
+
         // * Clone the MLP
         MultiLayerPerceptron<T> clone() const;
 

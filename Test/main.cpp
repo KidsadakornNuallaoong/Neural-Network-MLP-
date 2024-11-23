@@ -18,7 +18,7 @@ int main() {
     vector<vector<double>> targets = {{0}, {1}, {1}, {0}};
 
     mlp.setActivation({"sigmoid", "sigmoid"});
-    mlp.setAccuracy(0.001);
+    mlp.setAccuracy(0.01);
 
     double learningRate = 0.01;
 
@@ -37,7 +37,7 @@ int main() {
 
     mlp2.import_from_json("mlp_export.json");
 
-    mlp2.display();
+    // mlp2.display();
     mlp2.predict(inputs, R_D);
 
     return 0;
