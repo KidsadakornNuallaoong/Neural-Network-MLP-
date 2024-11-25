@@ -188,87 +188,86 @@
 #include <sstream>
 #include <stdexcept>
 
-// #ifdef _WIN32
-//     #include <thread>
-//     #include <conio.h> // For _kbhit and _getch
+
+
+#ifdef _WIN32
+    #include <thread>
+    #include <conio.h> // For _kbhit and _getch
     
-//     bool running = true;
-//     bool trainning_display = false;
+    bool running = true;
+    bool trainning_display = false;
 
-//     void checkInput() {
-//         while (running) {
-//             if (_kbhit()) {
-//                 char ch = _getch();
-//                 if (ch == 'q' || ch == 'Q') {
-//                     running = false;
-//                 }
+    void checkInput() {
+        while (running) {
+            if (_kbhit()) {
+                char ch = _getch();
+                if (ch == 'q' || ch == 'Q') {
+                    running = false;
+                }
 
-//                 if (ch == 'd' || ch == 'D') {
-//                     trainning_display = !trainning_display;
-//                 }
-//             }
-//         }
-//     }
+                if (ch == 'd' || ch == 'D') {
+                    trainning_display = !trainning_display;
+                }
+            }
+        }
+    }
 
-// #elif __linux__
-//     #include <thread>
-//     #include <atomic>
-//     #include <unistd.h>
-//     #include <fcntl.h>
-//     #include <termios.h>
+#elif __linux__
+    #include <thread>
+    #include <atomic>
+    #include <unistd.h>
+    #include <fcntl.h>
+    #include <termios.h>
 
-//     std::atomic<bool> running(true);
-//     std::atomic<bool> trainning_display(false);
+    std::atomic<bool> running(true);
+    std::atomic<bool> trainning_display(false);
 
-//     bool kbhit() {
-//         struct termios oldt, newt;
-//         int ch;
-//         int oldf;
+    bool kbhit() {
+        struct termios oldt, newt;
+        int ch;
+        int oldf;
 
-//         // Get the current terminal settings
-//         tcgetattr(STDIN_FILENO, &oldt);
-//         newt = oldt;
-//         // Disable canonical mode and echo
-//         newt.c_lflag &= ~(ICANON | ECHO);
-//         tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-//         // Set stdin to non-blocking mode
-//         oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
-//         fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
+        // Get the current terminal settings
+        tcgetattr(STDIN_FILENO, &oldt);
+        newt = oldt;
+        // Disable canonical mode and echo
+        newt.c_lflag &= ~(ICANON | ECHO);
+        tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+        // Set stdin to non-blocking mode
+        oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
+        fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
 
-//         // Check for input
-//         ch = getchar();
+        // Check for input
+        ch = getchar();
 
-//         // Restore terminal settings
-//         tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-//         fcntl(STDIN_FILENO, F_SETFL, oldf);
+        // Restore terminal settings
+        tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+        fcntl(STDIN_FILENO, F_SETFL, oldf);
 
-//         if(ch != EOF) {
-//             ungetc(ch, stdin);
-//             return true;
-//         }
+        if(ch != EOF) {
+            ungetc(ch, stdin);
+            return true;
+        }
 
-//         return false;
-//     }
+        return false;
+    }
 
-//     void checkInput() {
-//         while (running) {
-//             if (kbhit()) {
-//                 char ch = getchar();
-//                 if (ch == 'q' || ch == 'Q') {
-//                     running = false;
-//                 }
+    void checkInput() {
+        while (running) {
+            if (kbhit()) {
+                char ch = getchar();
+                if (ch == 'q' || ch == 'Q') {
+                    running = false;
+                }
 
-//                 if (ch == 'd' || ch == 'D') {
-//                     trainning_display = !trainning_display;
-//                 }
-//             }
-//             std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Small delay to avoid high CPU usage
-//         }
-//     }
-// #endif
-
-bool running = true;
-bool trainning_display = false;
+                if (ch == 'd' || ch == 'D') {
+                    trainning_display = !trainning_display;
+                }
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Small delay to avoid high CPU usage
+        }
+    }
+#endif
 
 template <typename T>
 MultiLayerPerceptron<T>::MultiLayerPerceptron()
